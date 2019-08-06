@@ -1,0 +1,193 @@
+// Source file: Tablero.java
+import Turno;
+import Jugador;
+import Casilla;
+import java.io.*;
+public class Tablero {
+private final int LADO = 3;
+private Casilla m_Casilla[] = new Casilla[LADO*LADO];
+private Turno m_Turno;
+
+
+/**
+Efectos: Construye el tablero y prepara el turno
+*/
+Tablero(Turno turno) {
+m_Turno = turno;
+for (int fila = 0; fila &lt; LADO; fila++)
+for (int columna = 0; columna &lt; LADO; columna++)
+{
+m_Casilla[fila * LADO+columna] = new Casilla(fila,columna);
+}
+}
+/**
+Efectos: Devuelve la casilla correspondiente a unas coordenadas
+*/
+public Casilla ObtenerCasilla(int fila, int columna) {
+return m_Casilla[fila * LADO+columna];
+}
+/**
+Efectos: Pregunta unas coordenadas por pantalla
+
+*/
+private Casilla PreguntaCasilla() throws Exception {
+System.out.print(&quot;Introduzca coordenda de fila: &quot;);
+BufferedReader data = new BufferedReader(new InputStreamReader(System.in));
+int fila = Integer.parseInt(data.readLine());
+
+System.out.print(&quot;Introduzca coordenda de columna: &quot;);
+int columna = Integer.parseInt(data.readLine());
+
+return ObtenerCasilla(fila,columna);
+}
+
+/**
+Efectos: Inicia y juega la partida controlando el turno.
+*/
+public void JugarPartida() throws Exception {
+//Ponemos las primeras 5 casillas
+for (int cont_pon = 0; cont_pon &lt; 5; cont_pon++)
+{
+PonerFicha();
+m_Turno.Siguiente();
+}
+//Si ha ganado alguno fin
+if (HaGanado() != null) {
+System.out.print(&quot;Ha ganado el jugador &quot;);
+System.out.println(HaGanado().Nombre());
+return;
+}
+//En otro caso pedimos que se ponga la sexta ficha
+PonerFicha();
+m_Turno.Siguiente();
+
+while (HaGanado() == null) {
+MoverFicha();
+m_Turno.Siguiente();
+}
+System.out.print(&quot;Ha ganado el jugador &quot;);
+System.out.println(HaGanado().Nombre());
+}
+
+/**
+Efectos: Pone inicialmente las fichas en el tablero preguntando a los jugadores
+*/
+public void PonerFicha() throws Exception {
+System.out.print(&quot;Jugador &quot;);
+System.out.print(m_Turno.QuienToca().Nombre());
+System.out.println(&quot; Introduzca casilla para poner ficha&quot;);
+Universidad Rey Juan Carlos - ETSII – Ciencias de la Computación 169
+Solución de los ejercicios
+
+Casilla casilla = null;
+do
+casilla = PreguntaCasilla();
+while ((casilla == null) || (!casilla.EstaVacia()));
+casilla.PonerFicha(m_Turno.QuienToca().ObtenerFicha());
+}
+
+/**
+Efectos: Mueve una ficha desde una casilla hasta otra
+*/
+public void MoverFicha() throws Exception {
+System.out.print(&quot;Jugador &quot;);
+
+System.out.print(m_Turno.QuienToca().Nombre());
+System.out.println(&quot; introduzca ficha a mover&quot;);
+//Que la casilla origen tenga una ficha del juagdor que toca
+Casilla casilla_origen = null;
+do
+casilla_origen = PreguntaCasilla();
+while ((casilla_origen == null) ||
+(casilla_origen.EstaVacia()) ||
+(m_Turno.QuienToca() != casilla_origen.ObtenerFicha().TipoFicha()));
+System.out.print(&quot;Jugador &quot;);
+System.out.print(m_Turno.QuienToca().Nombre());
+System.out.println(&quot; introduzca casilla destino&quot;);
+//Que la casilla destino este vacia
+Casilla casilla_destino = null;
+do
+casilla_destino = PreguntaCasilla();
+while ((casilla_destino == null) ||
+(!casilla_destino.EstaVacia()) ||
+(m_Turno.QuienToca() != casilla_origen.ObtenerFicha().TipoFicha()) ||
+(!casilla_origen.Adyacente(casilla_destino)));
+casilla_destino.PonerFicha(casilla_origen.ObtenerFicha());
+casilla_origen.PonerFicha(null);
+}
+
+/**
+Efectos: Comprueba si hay 3 fichas en linea del mismo jugador
+Retorna: Devuelve el jugador ganador o en otro caso null
+*/
+public Jugador HaGanado() {
+//Comprobación de las filas
+for (int fila = 0; fila &lt; LADO; fila++) {
+
+boolean tres_en_raya = true;
+
+Jugador pieza = null;
+
+if (ObtenerCasilla(fila,0).ObtenerFicha() != null) {
+pieza = ObtenerCasilla(fila,0).ObtenerFicha().TipoFicha();
+for (int columna = 1; columna &lt; LADO; columna++) {
+if ((ObtenerCasilla(fila,columna).ObtenerFicha() == null) ||
+(pieza != ObtenerCasilla(fila,columna).ObtenerFicha().TipoFicha()))
+tres_en_raya = false;
+}
+}
+if ((pieza != null) &amp;&amp; (tres_en_raya))
+return pieza;
+}
+//Comprobación de las columnas
+for (int columna = 0; columna &lt; LADO; columna++)
+{
+boolean tres_en_raya = true;
+Jugador pieza = null;
+
+if (ObtenerCasilla(0,columna).ObtenerFicha() != null) {
+pieza = ObtenerCasilla(0,columna).ObtenerFicha().TipoFicha();
+for (int fila = 1; fila &lt; LADO; fila++) {
+if ((ObtenerCasilla(fila,columna).ObtenerFicha() == null) ||
+(pieza != ObtenerCasilla(fila,columna).ObtenerFicha().TipoFicha()))
+tres_en_raya = false;
+}
+if ((pieza != null) &amp;&amp; (tres_en_raya))
+return pieza;
+
+}
+}
+//Comprobación de una diagonal
+boolean tres_en_raya = true;
+
+Jugador pieza = null;
+
+if (ObtenerCasilla(0,0).ObtenerFicha() != null) {
+pieza = ObtenerCasilla(0,0).ObtenerFicha().TipoFicha();
+
+for (int pos = 1; pos &lt; LADO; pos++) {
+if ((ObtenerCasilla(pos,pos).ObtenerFicha() == null) ||
+(pieza != ObtenerCasilla(pos,pos).ObtenerFicha().TipoFicha()))
+tres_en_raya = false;
+}
+if ((pieza != null) &amp;&amp; (tres_en_raya))
+return pieza;
+}
+//Comprobación de la otra diagonal
+tres_en_raya = true;
+pieza = null;
+
+if (ObtenerCasilla(LADO­1,0).ObtenerFicha() != null) {
+pieza = ObtenerCasilla(LADO­1,0).ObtenerFicha().TipoFicha();
+for (int pos = 1; pos &lt; LADO; pos++) {
+if ((ObtenerCasilla(pos,pos).ObtenerFicha() == null) ||
+(pieza != ObtenerCasilla(pos,pos).ObtenerFicha().TipoFicha()))
+tres_en_raya = false;
+}
+if ((pieza != null) &amp;&amp; (tres_en_raya))
+return pieza;
+
+}
+return pieza;
+}
+}
