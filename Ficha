@@ -1,0 +1,17 @@
+// Source file: Ficha.java
+public class Ficha {
+private Jugador propietario;
+
+/**
+Efectos: Construye una ficha asignándole su propietario
+*/
+Ficha(Jugador jugador) {
+propietario = jugador;
+}
+/**
+Efectos: Devuelve al jugador propietario de la ficha
+*/
+public Jugador TipoFicha() {
+return propietario;
+}
+}
