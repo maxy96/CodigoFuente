@@ -1,0 +1,45 @@
+Source file: Casilla.java
+import java.math.*;
+public class Casilla {
+private Ficha m_Ficha;
+private int fila;
+private int columna;
+
+/**
+Efectos: Construye nuna casilla que conoce sus coordenadas en el tablero
+*/
+Casilla(int fila, int columna) {
+this.fila = fila;
+this.columna = columna;
+}
+
+/**
+Retorna: True si la casilla esta vacia
+*/
+public boolean EstaVacia() {
+return (m_Ficha == null);
+}
+
+/**
+Efectos: Pone una ficha en una casilla
+*/
+public void PonerFicha(Ficha ficha) {
+m_Ficha = ficha;
+}
+
+/**
+Efectos: Obtiene la ficha que hay en una casilla
+
+*/
+public Ficha ObtenerFicha() {
+return m_Ficha;
+}
+
+/**
+Efectos: Mira si dos casillas son adyacentes
+*/
+public boolean Adyacente(Casilla casilla) {
+return ((Math.abs(casilla.fila ­ fila) &lt; 2) &amp;&amp;
+(Math.abs(casilla.columna ­ columna) &lt; 2));
+}
+}
