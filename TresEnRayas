@@ -1,0 +1,24 @@
+// Source file: TresEnRaya.java
+import Tablero;
+import Turno;
+import Jugador;
+public class TresEnRaya {
+/**
+Efectos: Crea objetos y lanza una partida
+*/
+public static void main(String argv[]) {
+Jugador m_Jugador_1 = new Jugador(&quot;A&quot;);
+Jugador m_Jugador_2 = new Jugador(&quot;B&quot;);
+Turno m_Turno = new Turno(m_Jugador_1, m_Jugador_2);
+Tablero m_Tablero = new Tablero(m_Turno);
+
+try {
+m_Tablero.JugarPartida();
+}
+Universidad Rey Juan Carlos - ETSII – Ciencias de la Computación 171
+Solución de los ejercicios
+catch (Exception e) {
+System.out.println(&quot;Ha ocurrido un error inesperado&quot;);
+}
+}
+}
